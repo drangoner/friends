@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<title>Long yue Stage
+		</title>
+		<style>
+			html, body {
+				height: 100%;
+			}
+
+			body {
+				background-color: #000000;
+				margin: 0;
+				font-family: Helvetica, sans-serif;;
+				overflow: hidden;
+			}
+
+			a {
+				color: #ffffff;
+				cursor: pointer;
+			}
+
+			#info {
+				position: absolute;
+				width: 100%;
+				color: #ffffff;
+				padding: 5px;
+				font-family: Monospace;
+				font-size: 13px;
+				font-weight: bold;
+				text-align: center;
+				z-index: 1;
+			}
+
+			#menu {
+				position: absolute;
+				bottom: 20px;
+				width: 100%;
+				text-align: center;
+			}
+
+			.element {
+				width: 480px;
+				height: 640px;
+				box-shadow: 0px 0px 12px rgba(0,255,255,0.5);
+				border: 1px solid rgba(127,255,255,0.25);
+				text-align: center;
+				padding-top: 10px;
+				cursor: default;
+			}
+
+			.element:hover {
+				box-shadow: 0px 0px 12px rgba(0,255,255,0.75);
+				border: 1px solid rgba(127,255,255,0.75);
+			}
+
+				.element .number {
+					position: absolute;
+					top: 20px;
+					right: 20px;
+					font-size: 12px;
+					color: rgba(127,255,255,0.75);
+				}
+
+				.element .symbol {
+					position: absolute;
+					top: 40px;
+					left: 0px;
+					right: 0px;
+					font-size: 60px;
+					font-weight: bold;
+					color: rgba(255,255,255,0.75);
+					text-shadow: 0 0 10px rgba(0,255,255,0.95);
+				}
+
+				.element .details {
+					position: absolute;
+					bottom: 15px;
+					left: 0px;
+					right: 0px;
+					font-size: 48px;
+					font-weight: bolder;
+					color: rgba(127,255,255,0.75);
+				}
+
+				.coment{
+					color: white;
+					float: right;
+				}
+				.coment p{
+					color: white;
+				}
+				.coment form{
+					text-align: center;
+				}
+				.coment ul li{
+					list-style: none;
+				}
+				.coment ul li p{
+					color:white;
+				}
+		</style>
+	</head>
+	<body>
+		<?php include 'mysql_connect.php'; ?>
+
+		<script src="js/jquery.js"></script>
+		<script src="js/three.min.js"></script>
+		<script src="js/tween.min.js"></script>
+		<script src="js/TrackballControls.js"></script>
+		<script src="js/CSS3DRenderer.js"></script>
+
+		<div id="container"></div>
+		<div id="coment" class="coment">
+			<form action="" method="post" accept-charset="utf-8" onsubmit="return ajaxSubmit()">
+				<h2>Someting to say...</h2>
+
+				昵称：<input type="text" id = "ID" name="ID" value=""><br><br>
+				留言：<textarea id = "comments" name="coments" id="" cols="25" rows="5"></textarea><br>
+				<input type="submit" name="button" value="提交">&nbsp 
+				<!--<input type="text" name="cansole" value="取消">-->
+			</form>
+			<ul id = "comments_list">
+			</ul>
+			
+		</div>
+		<script>
+			var table = ["韩双双", "赵梦园", "朱佳慧","陶玉芹",
+			"王思璇","熊和宽","叶备","杨鹏",'王梦雨',
+			'刘恒','张彬','于川','高小捷','张璇子','高文森',
+			'苏俊飞','詹凯','王昊天','陈佳艺','何森','刘怡帆','张亮',
+			'丛玥','梁文超','刘梦园','闫晨阳','范锐','李晓雪','肖震',
+			'许钰风','杨北','李洲凤','许丽华','樊聪聪','刘慧','卢红辞',
+			'James long','James long','James long','James long','谢勇盛',
+			'韩彤彤','James long','James long','James long','陈家宣',
+			'James long','James long'
+			];
+			var objects = [];
+			var targets = { table: []};
+
+			var camera, scene, renderer;
+			var controls;
+			init();
+			animate();
+
+			function init() {
+
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.position.z = 4500;
+
+				scene = new THREE.Scene();
+
+				// table
+
+				for ( var i = 0; i < 48; i++) {
+
+					var element = document.createElement( 'div' );
+					element.className = 'element';
+					element.style.backgroundColor = 'rgba(0,127,127,'+( Math.random() * 0.5 + 0.25 ) + ')';
+					var a = document.createElement('a');
+					a.href = i+'/index.html';
+					element.appendChild( a );
+					
+					var image = document.createElement('img');
+					image.src = 'images/'+i+'.jpg';
+					image.style.width = 400 +'px'; 
+					image.style.height = 560 +'px'; 
+					a.appendChild(image)
+
+					var names = document.createElement('div');
+					names.className = 'details';
+					names.innerHTML = table[i];
+
+					element.appendChild( names );
+					var object = new THREE.CSS3DObject( element );
+					object.position.x = Math.random() * 4000 - 2000;
+					object.position.y = Math.random() * 4000 - 2000;
+					object.position.z = Math.random() * 4000 - 2000;
+					object.rotation.x = Math.random() * Math.PI*2;
+					object.rotation.y = Math.random() * Math.PI*2;
+					object.rotation.z = Math.random() * Math.PI*2;
+					scene.add( object );
+
+					objects.push( object );
+
+					//
+
+					var object = new THREE.Object3D();
+					object.position.x = ( i%12)*600-3300;
+					object.position.y = - parseInt( i/12) * 760 + 1080;
+					
+					targets.table.push( object );
+
+				}
+				//
+
+				renderer = new THREE.CSS3DRenderer();
+				renderer.setSize( window.innerWidth*2/3, window.innerHeight );
+				renderer.domElement.style.position = 'absolute';
+				document.getElementById( 'container' ).appendChild( renderer.domElement );
+
+				//
+
+				controls = new THREE.TrackballControls( camera, renderer.domElement );
+				//controls.enabled=false;
+				//controls.screen.left=10000000;
+				//controls.noRotate=true;
+				//controls.staticMoving=true;
+				controls.rotateSpeed = 5.0;
+				controls.minDistance = 200;
+				controls.maxDistance = 8000;
+				controls.zoomSpeed=0.8;
+				controls.addEventListener( 'change', render );
+				transform( targets.table, 3000 );
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function transform( targets, duration ) {
+
+				//TWEEN.removeAll();
+
+				for ( var i = 0; i < objects.length; i ++ ) {
+
+					var object = objects[ i ];
+					var target = targets[ i ];
+
+					new TWEEN.Tween( object.position )
+						.to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
+						.easing( TWEEN.Easing.Exponential.InOut )
+						.start();
+
+					new TWEEN.Tween( object.rotation )
+						.to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration )
+						.easing( TWEEN.Easing.Exponential.InOut )
+						.start();
+
+				}
+				new TWEEN.Tween(camera.position).to({z:2800},10000).easing(TWEEN.Easing.Exponential.InOut).start();
+
+				/*new TWEEN.Tween( this )
+					.to( {}, duration * 2 )
+					.onUpdate( render )
+					.start();*/
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth*2/3, window.innerHeight );
+
+				render();
+
+			}
+
+			function animate() {
+
+				
+
+				TWEEN.update();
+				controls.update();
+				requestAnimationFrame( animate );
+				render();
+			}
+
+			function render() {
+
+				renderer.render( scene, camera );
+
+			}
+
+		document.getElementById('coment').style.width = window.innerWidth/3 + 'px';
+
+$(document).ready(function(){
+                 
+   ajaxGet();
+});
+function ajaxGet( nocache ){
+	var time ="";
+    if (nocache){
+    	time ="?t="+(new Date()).getTime();
+        
+    }
+    $.get("/ajax/comment_list.php"+time,function(comments){
+    
+    	getCallback(comments);
+    
+    });
+
+
+}
+
+function getCallback(comments){
+	var txt="";
+    var time =new Date();
+
+    for(var i=comments.length -1;i>=0;i--){
+    	
+        txt += '<li><p>姓名：<span style="font-weight:bold">';
+
+        txt += transfer(comments[i]['name']) +'</span><br>留言：';
+        txt += transfer(comments[i]['comments']) +'</p>';
+        txt += '<p style="text-align:right">'+comments[i]['ip']+'</p>';
+        txt += '<p style="text-align:right">';
+        //time.setTime(comments[i]['time']*1000);
+        txt += comments[i]['time'] +'</p></li><hr>';
+        
+    }
+
+	$("#comments_list").html(txt);
+}
+function transfer(txt){
+	txt =txt.replace(/</g,"&lt;");
+    txt =txt.replace(/>/g,"&gt;");
+    return txt;
+
+
+}
+function ajaxSubmit(){
+	var name =$("#ID").val();
+    var comment=$("#comments").val();
+    $.post("./ajax/comment_submit.php",{
+        name: name,
+        comment: comment
+    },
+    function(){
+    
+        ajaxGet(true);
+        
+    });
+    
+	 return false;
+
+}
+		</script>
+	</body>
+</html>
